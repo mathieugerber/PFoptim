@@ -1,0 +1,6 @@
+useDynLib(PFoptim, .registration=TRUE)
+exportPattern("^[[:alpha:]]+")
+importFrom(Rcpp, evalCpp)
+importFrom(Rdpack,reprompt)
+importFrom(mnormt,rmnorm)
+importFrom(mnormt,rmt)

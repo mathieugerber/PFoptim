@@ -1,0 +1,14 @@
+Package: PFoptim
+Type: Package
+Title: Global Stochastic Optimization using a Particle Filter Algorithm
+Version: 1.0
+Date: 2021-07-27
+Author: Mathieu Gerber
+Maintainer: Mathieu Gerber <mathieu.gerber@bristol.ac.uk>
+Description: This package implements the G-PFSO (Global Particle Filter Stochastic Optimization) algorithm of Gerber and Douc (2021) for finding the global minimizer of a function defined through an expectation. Informally speaking, G-PFSO can be seen as a particle and derivative-free version of stochastic gradient methods.
+License: GPL (>= 2)
+Imports: Rcpp (>= 1.0.7), Rdpack
+LinkingTo: Rcpp
+RdMacros: Rdpack
+RoxygenNote: 7.1.1.9001
+
