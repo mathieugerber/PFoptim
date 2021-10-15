@@ -1,15 +1,4 @@
 
-##TO DO:
-##Inf and Upper. 
-#library(devtools)
-#library(roxygen2)
-#library(Rcpp)
-#compileAttributes("PFoptim")
-#roxygenize("PFoptim")
-#install("PFoptim")
-#R CMD Rd2pdf PFoptim
-
-
 #' Global Particle filter Stochastic Optimization
 #'
 #' @importFrom mnormt  rmt  rmnorm 
