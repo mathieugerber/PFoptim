@@ -34,7 +34,26 @@ A list with the following components:
 This function implements the G-PFSO (Global Particle Filter Stochastic Optimization) algorithm of \insertCite{gerber2020online2;textual}{PFoptim} for minimzing either the function \eqn{\theta\mapsto E[\mathrm{fn}(\theta,Y)]} from i.i.d. realizations \eqn{y_1,...,y_n} of \eqn{Y} or the function  \eqn{\theta\mapsto\sum_{i=1}^n \mathrm{fn}(\theta,y_i)}, where \eqn{\theta} is a vector of dimension d.
 }
 \details{
+Note that arguments after \code{...} must be matched exactly.
 
+G-PFSO computes two estimators of the minimizer of the objective function, namely the estimators \eqn{\bar{\theta}^N_{\mathrm{numit}}} and  \eqn{\tilde{\theta}^N_{\mathrm{numit}}}. The former  is defined by \eqn{\bar{\theta}^N_{\mathrm{numit}}=\frac{1}{\mathrm{numit}}\sum_{t=1}^{\mathrm{numit}}\tilde{\theta}_t^N}  and converges to a particular element of the search space at a faster rate than the latter, but the latter estimator can find more quickly a small neighborhood of the minimizer of the objective function. 
+
+By default the sequence \eqn{(t_p)_{p\ge  0}} is taken as 
+\deqn{t_p=t_{p-1}+\lceil  \max\big( A t_{p-1}^{\varrho}\log(t_{p-1}),B\big) \rceil}
+with A=B=1, \eqn{\varrho=0.1} and \eqn{t_0=5}. The value of \eqn{A,B,\varrho} and \eqn{t_0} can be changed using the control argument (see below).
+
+The \code{control} argument is a list that can supply any of the following components:
+\describe{
+\item{alpha:}{Parameter \eqn{\alpha} of the learning rate \eqn{t^{-\alpha}}, which must be a strictly positive real number. By default,  \code{alpha=0.5}.}
+\item{Sigma:}{Scale matrix used to sample the particles.  \code{Sigma} must be either a d by d covariance matrix or a strictly positive real number. In this latter case the scale matrix used to sample the particles is  \code{diag(Sigma , d )}. By default,  \code{Sigma=1}.}
+\item{trace:}{If trace=TRUE then the value of \eqn{\tilde{\theta}_{t}} and of the effective sample size \eqn{ESS_t} for all \eqn{t=1,\dots,\mathrm{numit}} are returned. By default, trace=FALSE.}
+\item{A:}{Parameter A of the sequence \eqn{(t_p)_{p\geq 0}} used by default (see above). This parameter must be strictly positive.}
+\item{B:}{Parameter B of the sequence \eqn{(t_p)_{p\geq 0}} used by default (see above). This parameter must non-negative.}
+\item{varrho:}{Parameter varrho of the sequence \eqn{(t_p)_{p\geq 0}} used by default (see above). This parameter must be in the interval (0,1).}
+\item{t0:}{Parameter \eqn{t_0} of the the sequence \eqn{(t_p)_{p\geq 0}} used by default (see above). This parameter must be a non-negative integer.}
+\item{nu:}{Number of degrees of freedom of the Student's t-distributions used at time \eqn{t\in(t_p)_{\ge 0}} to generate the new particles. By default \code{nu=10}}
+\item{c_ess:}{A resamling step is performed when \eqn{ESS_t<=N c_\mathrm{ess}}. This parameter must be in the interval (0,1] and by default \code{c_ess}=0.7.}
+ }
 }
 \examples{
 #Definition of fn
@@ -59,7 +78,7 @@ pi0<-function(N){
 mle<-c(mean(y),sd(y))
 ## use gpfso to compute the MLE
 Est<-gpfso(y, N=100, fn=fn_toy, init=pi0, numit=20000, control=list(trace=TRUE))
-## print \bar{\theta}_{numit} and \tilde{\theta}_{numit}
+## print \bar{\theta}^N_{numit} and \tilde{\theta}^N_{numit}
 print(Est$B_par)
 print(Est$T_par)
 ##assess convergence
@@ -72,7 +91,7 @@ for(k in 1:2){
 ##Example 2: Expected log-likelihood estimation in the Gaussian model 
 ## Estimation of theta_star using gpfso
 Est<-gpfso(y, N=100, fn=fn_toy, init=pi0, control=list(trace=TRUE))
-## print \bar{\theta}_{numit} and \tilde{\theta}_{numit}
+## print \bar{\theta}^N_{numit} and \tilde{\theta}^N_{numit}
 print(Est$B_par)
 print(Est$T_par)
 ##assess convergence

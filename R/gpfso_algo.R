@@ -1,4 +1,16 @@
 
+##TO DO:
+##Inf and Upper. 
+#library(devtools)
+#library(roxygen2)
+#library(Rcpp)
+#compileAttributes("PFoptim")
+#roxygenize("PFoptim")
+#install("PFoptim")
+#R CMD Rd2pdf PFoptim
+#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
+
+
 #' Global Particle filter Stochastic Optimization
 #'
 #' @importFrom mnormt  rmt  rmnorm 
@@ -32,7 +44,7 @@
 #' \item{B:}{Parameter B of the sequence \eqn{(t_p)_{p\geq 0}} used by default (see above). This parameter must non-negative.}
 #' \item{varrho:}{Parameter varrho of the sequence \eqn{(t_p)_{p\geq 0}} used by default (see above). This parameter must be in the interval (0,1).}
 #' \item{t0:}{Parameter \eqn{t_0} of the the sequence \eqn{(t_p)_{p\geq 0}} used by default (see above). This parameter must be a non-negative integer.}
-#' \item{nu:}{Number of degrees of freedom of the Student's t-distributions used at time \eqn{t\in(t_p)_{\ge 0} to generate the new particles. By default \code{nu=10}}
+#' \item{nu:}{Number of degrees of freedom of the Student's t-distributions used at time \eqn{t\in(t_p)_{\ge 0}} to generate the new particles. By default \code{nu=10}}
 #' \item{c_ess:}{A resamling step is performed when \eqn{ESS_t<=N c_\mathrm{ess}}. This parameter must be in the interval (0,1] and by default \code{c_ess}=0.7.}
 #'  }
 #' @return A list with the following components:
