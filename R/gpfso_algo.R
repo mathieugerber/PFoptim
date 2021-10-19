@@ -1,14 +1,4 @@
 
-##TO DO:
-##Inf and Upper. 
-#library(devtools)
-#library(roxygen2)
-#library(Rcpp)
-#compileAttributes("PFoptim")
-#roxygenize("PFoptim")
-#install("PFoptim")
-#R CMD Rd2pdf PFoptim
-#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
 
 
 #' Global Particle filter Stochastic Optimization
@@ -261,22 +251,21 @@ gpfso<-function(y, N, fn, init, ..., numit=-1, resampling="SSP", control= list()
               return(cat('Error: for a single observation y, fn(particles, y) should be a vector of length N'))
        }else{
          work[is.nan(work)]<--Inf
-         w<-work
-         w1<- exp(w - max(w))
-         W<- w1 / sum(w1)
-         ESS<-1/sum(W^2)
-         tilde_theta<-apply(W*particles,2,sum)
-         hat_theta<-tilde_theta
-         if(is.null(control$trace)==FALSE && control$trace==TRUE){
-           mean_vec[t,]<-tilde_theta
-           ESS_vec[t]<-ESS
-         }
-         count=1
-         for(t in  2:nit){
-            if(max(w)==-Inf){
-                collapse<- TRUE
-                break
-            }
+         if(max(work)== -Inf){
+              return(cat('Error: none of the particles returned by init(N) is in the search space'))
+         }else{
+           w<-work
+           w1<- exp(w - max(w))
+           W<- w1 / sum(w1)
+           ESS<-1/sum(W^2)
+           tilde_theta<-apply(W*particles,2,sum)
+           hat_theta<-tilde_theta
+           if(is.null(control$trace)==FALSE && control$trace==TRUE){
+             mean_vec[t,]<-tilde_theta
+             ESS_vec[t]<-ESS
+           }
+           count=1
+           for(t in  2:nit){
             A<-1:N
             if(ESS<=ESS_bound){
                A<-Algo_res(runif(N),W)
@@ -299,6 +288,10 @@ gpfso<-function(y, N, fn, init, ..., numit=-1, resampling="SSP", control= list()
                work<- -fn(particles,   y[use,],...)
             }
             work[is.nan(work)]<--Inf
+            if(max(work)==-Inf){
+                collapse<- TRUE
+                break
+            }
             w<-w+work
             w1<- exp(w - max(w))
             W<- w1 / sum(w1)
