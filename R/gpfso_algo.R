@@ -1,4 +1,14 @@
 
+##TO DO:
+##Inf and Upper. 
+#library(devtools)
+#library(roxygen2)
+#library(Rcpp)
+#compileAttributes("PFoptim")
+#roxygenize("PFoptim")
+#install("PFoptim")
+#R CMD Rd2pdf PFoptim
+#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
 
 
 #' Global Particle filter Stochastic Optimization
@@ -303,6 +313,7 @@ gpfso<-function(y, N, fn, init, ..., numit=-1, resampling="SSP", control= list()
                ESS_vec[t]<-ESS
             }
         }
+       }
      }
      if(collapse){
           return(cat('Error: particle system collapse (all the particles are outside the search space) '))
