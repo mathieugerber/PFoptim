@@ -4,4 +4,4 @@ R package to optimize a function defined through an expectation using the G-PFSO
 
 To install the package run, in R, library(devtools) and then install_github("mathieugerber/PFoptim").
 
-Remark: The code is mainly in R and therefore not very fast. 
+Remark: The code is mainly in R and therefore not particularly fast. 
