@@ -269,7 +269,7 @@ gpfso<-function(y, N, fn, init, ..., numit=-1, resampling="SSP", control= list()
            W<- w1 / sum(w1)
            ESS<-1/sum(W^2)
            tilde_theta<-apply(W*particles,2,sum)
-           hat_theta<-tilde_theta
+           bar_theta<-tilde_theta
            if(is.null(control$trace)==FALSE && control$trace==TRUE){
              mean_vec[t,]<-tilde_theta
              ESS_vec[t]<-ESS
@@ -307,7 +307,7 @@ gpfso<-function(y, N, fn, init, ..., numit=-1, resampling="SSP", control= list()
             W<- w1 / sum(w1)
             ESS<-1/sum(W^2)
             tilde_theta<-apply(W*particles,2,sum)
-            hat_theta<-((t-1)*hat_theta+tilde_theta)/t
+            bar_theta<-((t-1)*bar_theta+tilde_theta)/t
             if(is.null(control$trace)==FALSE && control$trace==TRUE){
                mean_vec[t,]<-tilde_theta
                ESS_vec[t]<-ESS
@@ -319,9 +319,9 @@ gpfso<-function(y, N, fn, init, ..., numit=-1, resampling="SSP", control= list()
           return(cat('Error: particle system collapse (all the particles are outside the search space) '))
      }else{
            if(is.null(control$trace)==FALSE && control$trace==TRUE){
-              return(list(B_par=hat_theta, T_par=tilde_theta, T_hist=mean_vec,  ESS=ESS_vec))
+              return(list(B_par=bar_theta, T_par=tilde_theta, T_hist=mean_vec,  ESS=ESS_vec))
            }else{
-              return(list(B_par=hat_theta, T_par=tilde_theta, T_hist=NULL,  ESS=NULL))
+              return(list(B_par=bar_theta, T_par=tilde_theta, T_hist=NULL,  ESS=NULL))
            }
      }
   }
