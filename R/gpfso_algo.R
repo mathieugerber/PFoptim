@@ -111,9 +111,11 @@ gpfso<-function(y, N, fn, init, ..., numit=-1, resampling="SSP", control= list()
   if(is.vector(test)==TRUE){
         d<-1
         Sigma_use<-diag(1,d)
+        chol_Sig<-chol(Sigma_use)
   }else if(is.matrix(test)==TRUE){
         d<-ncol(test)
         Sigma_use<-diag(1,d)
+        chol_Sig<-chol(Sigma_use)
   }else{
         return(cat('Error: init should be a function such that init(N) is an N by d matrix (d= dimention of the search space) or a vector of length N (if d=1)'))
   }  
