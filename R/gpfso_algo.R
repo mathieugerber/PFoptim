@@ -141,8 +141,10 @@ gpfso<-function(y, N, fn, init, ..., numit=-1, resampling="SSP", control= list()
         }
         if(length(c(control$Sigma))==1){
             Sigma_use<-diag(control$Sigma,d)
+            chol_Sig<-chol(Sigma_use)
         }else{
             Sigma_use<-control$Sigma
+            chol_Sig<-chol(Sigma_use)
         }
   }
   
@@ -270,10 +272,10 @@ gpfso<-function(y, N, fn, init, ..., numit=-1, resampling="SSP", control= list()
                w<-rep(0,N)
             }
             if(t-1==tp_use[count]){
-               particles<-as.matrix(particles[A,])+rmt(N, rep(0,d), Sigma_use*(t-1)^(-2*alpha), df=nu)
+               particles<-as.matrix(particles[A,])+rmt(N, rep(0,d), Sigma_use*(t-1)^(-2*alpha), df=nu, sqrt=chol_Sig*(t-1)^(-alpha))
                count<-count+1
             }else{
-               particles<-as.matrix(particles[A,])+rmnorm(N,rep(0,d), Sigma_use*(t-1)^(-2*alpha))
+               particles<-as.matrix(particles[A,])+rmnorm(N,rep(0,d), Sigma_use*(t-1)^(-2*alpha), sqrt=chol_Sig*(t-1)^(-alpha))
             } 
             if(numit==-1){
                 use<-t
