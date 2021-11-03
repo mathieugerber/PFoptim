@@ -28,6 +28,7 @@
 #' \item{alpha:}{Parameter \eqn{\alpha} of the learning rate \eqn{t^{-\alpha}}, which must be a strictly positive real number. By default,  \code{alpha=0.5}.}
 #' \item{Sigma:}{Scale matrix used to sample the particles.  \code{Sigma} must be either a d by d covariance matrix or a strictly positive real number. In this latter case the scale matrix used to sample the particles is  \code{diag(Sigma , d )}. By default,  \code{Sigma=1}.}
 #' \item{trace:}{If trace=TRUE then the value of \eqn{\tilde{\theta}_{t}} and of the effective sample size \eqn{ESS_t} for all \eqn{t=1,\dots,\mathrm{numit}} are returned. By default, trace=FALSE.}
+#' \item{indep:}{If indep=TRUE and \code{Sigma} is a diagonal matrix or a scalar then the Student's t-distributions have independent components. By default, indep=TRUE and if \code{Sigma} is a not a diagonal matrix this parameter is ignored.}
 #' \item{A:}{Parameter A of the sequence \eqn{(t_p)_{p\geq 0}} used by default (see above). This parameter must be strictly positive.}
 #' \item{B:}{Parameter B of the sequence \eqn{(t_p)_{p\geq 0}} used by default (see above). This parameter must non-negative.}
 #' \item{varrho:}{Parameter varrho of the sequence \eqn{(t_p)_{p\geq 0}} used by default (see above). This parameter must be in the interval (0,1).}
@@ -194,7 +195,7 @@ gpfso<-function(y, N, fn, init, ..., numit=-1, resampling="SSP", control= list()
            }else{
               nu<-control$nu
            }
-    }
+  }
   if(is.numeric(y)==FALSE){
         return(cat('Error: y should be a numeric vector or a numeric matrix'))
   }else if(is.vector(y)==FALSE && is.matrix(y)==FALSE){
@@ -226,6 +227,14 @@ gpfso<-function(y, N, fn, init, ..., numit=-1, resampling="SSP", control= list()
        }else{
           Algo_res<-function(U,W) return(sample(1:length(W),length(W),prob=W, replace=TRUE))
        }
+       indep_student<-FALSE
+       if(max(abs(Sigma_use)-diag(Sigma_use))==0){
+            indep_student<-TRUE
+            if(is.null(control$indep)==FALSE && control$indep==FALSE){
+                 indep_student<-FALSE
+            }
+       }
+       
        
        collapse<-FALSE
        ESS_bound<- N*c_ess 
@@ -274,10 +283,14 @@ gpfso<-function(y, N, fn, init, ..., numit=-1, resampling="SSP", control= list()
                w<-rep(0,N)
             }
             if(t-1==tp_use[count]){
-               particles<-as.matrix(particles[A,])+rmt(N, rep(0,d), Sigma_use*(t-1)^(-2*alpha), df=nu, sqrt=chol_Sig*(t-1)^(-alpha))
-               count<-count+1
+              if(indep_student==FALSE){
+                  particles<-as.matrix(particles[A,])+rmt(N, mean=rep(0,d), S=-1, df=nu, sqrt=chol_Sig*(t-1)^(-alpha))
+              }else{
+                  particles<-as.matrix(particles[A,])+matrix(rt(N*d, df=nu), nrow=N, ncol=d, byrow=TRUE)%*%chol_Sig*(t-1)^(-alpha)
+              }
+              count<-count+1
             }else{
-               particles<-as.matrix(particles[A,])+rmnorm(N,rep(0,d), Sigma_use*(t-1)^(-2*alpha), sqrt=chol_Sig*(t-1)^(-alpha))
+               particles<-as.matrix(particles[A,])+rmnorm(N,rep(0,d), varcov=-1, sqrt=chol_Sig*(t-1)^(-alpha))
             } 
             if(numit==-1){
                 use<-t

@@ -8,6 +8,8 @@
 #' @usage SSP_Resampler(U,W)
 #' @param U A vector of points in (0,1) such that \code{length(U)=length(W)}.
 #' @param W A vector of normalized weights.
+#' @details 
+#' For efficiency reasons, \code{SSP_Resampler} does not perform checks on the supplied arguments.
 #' @return A vector of length N with elements in the set \eqn{\{1,...,N\}}, with \code{N=length(U)=length(W)}.
 #' @keywords resampling algorithms
 #' @export
@@ -29,6 +31,8 @@ SSP_Resampler <- function(points, W) {
 #' @usage Stratified_Resampler(U,W)
 #' @param U A vector of points in (0,1) such that \code{length(U)=length(W)}.
 #' @param W A vector of normalized weights.
+#' @details 
+#' For efficiency reasons, \code{Stratified_Resampler} does not perform checks on the supplied arguments.
 #' @return A vector of length N with elements in the set \eqn{\{1,...,N\}}, with \code{N=length(U)=length(W)}.
 #' @keywords resampling algorithms
 #' @export

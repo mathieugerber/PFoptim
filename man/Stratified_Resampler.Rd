@@ -17,6 +17,9 @@ A vector of length N with elements in the set \eqn{\{1,...,N\}}, with \code{N=le
 \description{
 This function implements the stratified resampling algorithm descibed see e.g. in Section 9.6 of \insertCite{chopin2020introduction;textual}{PFoptim}
 }
+\details{
+For efficiency reasons, \code{Stratified_Resampler} does not perform checks on the supplied arguments.
+}
 \examples{
 N<-100
 W<-rbeta(N,0.5,2)

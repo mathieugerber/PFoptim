@@ -17,6 +17,9 @@ A vector of length N with elements in the set \eqn{\{1,...,N\}}, with \code{N=le
 \description{
 This function implements the SSP resampling algorithm \insertCite{gerber2019negative}{PFoptim}.
 }
+\details{
+For efficiency reasons, \code{SSP_Resampler} does not perform checks on the supplied arguments.
+}
 \examples{
 N<-100
 W<-rbeta(N,0.5,2)
