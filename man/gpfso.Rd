@@ -85,7 +85,7 @@ print(Est$T_par)
 ##assess convergence
 par(mfrow=c(1,2))
 for(k in 1:2){
-  plot(Est$T_hist[,k],type='l', xlab="iteration", ylab="approximation error")
+  plot(Est$T_hist[,k],type='l', xlab="iteration", ylab="estimated value")
   lines(cumsum(Est$T_hist[,k])/1:length(Est$T_hist[,k]),type='l', col='red')
   abline(h=mle[k])
 }
@@ -98,7 +98,7 @@ print(Est$T_par)
 ##assess convergence
 par(mfrow=c(1,2))
 for(k in 1:2){
-  plot(Est$T_hist[,k],type='l', xlab="iteration", ylab="approximation error")
+  plot(Est$T_hist[,k],type='l', xlab="iteration", ylab="estimated value")
   lines(cumsum(Est$T_hist[,k])/1:length(Est$T_hist[,k]),type='l', col='red')
   abline(h=theta_star[k])
 }
