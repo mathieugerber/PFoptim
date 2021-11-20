@@ -271,7 +271,7 @@ gpfso<-function(obs, N, fn, init, numit=-1, resampling="SSP", ..., control= list
            w1<- exp(w - max(w))
            W<- w1 / sum(w1)
            ESS<-1/sum(W^2)
-           tilde_theta<-apply(W*particles,2,sum)
+           tilde_theta<-apply(c(W)*particles,2,sum)
            bar_theta<-tilde_theta
            if(is.null(control$trace)==FALSE && control$trace==TRUE){
              mean_vec[t,]<-tilde_theta
@@ -313,7 +313,7 @@ gpfso<-function(obs, N, fn, init, numit=-1, resampling="SSP", ..., control= list
             w1<- exp(w - max(w))
             W<- w1 / sum(w1)
             ESS<-1/sum(W^2)
-            tilde_theta<-apply(W*particles,2,sum)
+            tilde_theta<-apply(c(W)*particles,2,sum)
             bar_theta<-((t-1)*bar_theta+tilde_theta)/t
             if(is.null(control$trace)==FALSE && control$trace==TRUE){
                mean_vec[t,]<-tilde_theta
