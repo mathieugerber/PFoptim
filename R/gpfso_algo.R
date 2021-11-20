@@ -4,7 +4,6 @@
 #' @importFrom mnormt  rmt  rmnorm 
 #' @importFrom Rdpack reprompt
 #' @description This function implements the G-PFSO (Global Particle Filter Stochastic Optimization) algorithm of \insertCite{gerber2020online2;textual}{PFoptim} for minimzing either the function \eqn{\theta\mapsto E[\mathrm{fn}(\theta,Y)]} from i.i.d. realizations \eqn{y_1,...,y_n} of \eqn{Y} or the function  \eqn{\theta\mapsto\sum_{i=1}^n \mathrm{fn}(\theta,y_i)}, where \eqn{\theta} is a vector of dimension d.
-
 #' @usage gpfso(obs, N, fn, init, numit, ..., resampling=c("SSP", "STRAT", "MULTI"), control= list())
 #' @param obs Either a vector of observations or a matrix of observations (the number of rows being the sample size). 
 #' @param N Number of particles. The parameter  \code{N}  must be greater or equal to 2.
