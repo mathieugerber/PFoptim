@@ -5,10 +5,10 @@
 #' @importFrom Rdpack reprompt
 #' @description This function implements the G-PFSO (Global Particle Filter Stochastic Optimization) algorithm of \insertCite{gerber2020online2;textual}{PFoptim} for minimzing either the function \eqn{\theta\mapsto E[\mathrm{fn}(\theta,Y)]} from i.i.d. realizations \eqn{y_1,...,y_n} of \eqn{Y} or the function  \eqn{\theta\mapsto\sum_{i=1}^n \mathrm{fn}(\theta,y_i)}, where \eqn{\theta} is a vector of dimension d.
 
-#' @usage gpfso(y, N, fn, init, numit, ..., resampling=c("SSP", "STRAT", "MULTI"), control= list())
-#' @param y Either a vector of observations or a matrix of observations (the number of rows being the sample size). 
+#' @usage gpfso(obs, N, fn, init, numit, ..., resampling=c("SSP", "STRAT", "MULTI"), control= list())
+#' @param obs Either a vector of observations or a matrix of observations (the number of rows being the sample size). 
 #' @param N Number of particles. The parameter  \code{N}  must be greater or equal to 2.
-#' @param fn function for a single observation. If theta is an  \code{N} by d matrix and \code{y} is a matrix then  \code{fn(theta, y[i,])} must be a vector of length \code{N}. Similarly, if theta is an  \code{N} by d matrix  and \code{y} is a vector then \code{fn(theta,y[i])} must be a vector of length \code{N}. If some rows of theta are outside the search space then the corresponding entries of the vector \code{fn(theta, y[i,])} must be equal to \code{Inf}.
+#' @param fn function for a single observation. If theta is an  \code{N} by d matrix and y is a single observation (i.e. y is a scalar if \code{obs} is a vector and a vector if \code{obs} is a matrix)  then \code{fn(theta,y)} must be a vector of length \code{N}. If some rows of theta are outside the search space then the corresponding entries of the vector \code{fn(theta, y)} must be equal to \code{Inf}.
 #' @param init Function used to sample the initial particles  such that \code{init(N)} is an \code{N} by d matrix (or alternatively a vector of length \code{N} if d=1).
 #' @param ... Further arguments to be passed to \code{fn}.
 #' @param numit Number of iterations of the algorithm. If \code{numit} is not specified then G-PFSO estimates the minimizer of the function \eqn{E[\mathrm{fn}(\theta,Y)]} (in which case the observations are processed sequentially and \code{numit} is equal to the sample size). If \code{numit} is specified then G-PFSO computes the minimizer of the function \eqn{\sum_{i=1}^n \mathrm{fn}(\theta,y_i)}.

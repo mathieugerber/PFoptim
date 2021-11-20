@@ -4,14 +4,12 @@
 \alias{gpfso}
 \title{Global Particle filter Stochastic Optimization}
 \usage{
-gpfso(y, N, fn, init, numit, ..., resampling=c("SSP", "STRAT", "MULTI"), control= list())
+gpfso(obs, N, fn, init, numit, ..., resampling=c("SSP", "STRAT", "MULTI"), control= list())
 }
 \arguments{
-\item{y}{Either a vector of observations or a matrix of observations (the number of rows being the sample size).}
-
 \item{N}{Number of particles. The parameter  \code{N}  must be greater or equal to 2.}
 
-\item{fn}{function for a single observation. If theta is an  \code{N} by d matrix and \code{y} is a matrix then  \code{fn(theta, y[i,])} must be a vector of length \code{N}. Similarly, if theta is an  \code{N} by d matrix  and \code{y} is a vector then \code{fn(theta,y[i])} must be a vector of length \code{N}. If some rows of theta are outside the search space then the corresponding entries of the vector \code{fn(theta, y[i,])} must be equal to \code{Inf}.}
+\item{fn}{function for a single observation. If theta is an  \code{N} by d matrix and y is a single observation (i.e. y is a scalar if \code{obs} is a vector and a vector if \code{obs} is a matrix)  then \code{fn(theta,y)} must be a vector of length \code{N}. If some rows of theta are outside the search space then the corresponding entries of the vector \code{fn(theta, y)} must be equal to \code{Inf}.}
 
 \item{init}{Function used to sample the initial particles  such that \code{init(N)} is an \code{N} by d matrix (or alternatively a vector of length \code{N} if d=1).}
 
@@ -22,6 +20,8 @@ gpfso(y, N, fn, init, numit, ..., resampling=c("SSP", "STRAT", "MULTI"), control
 \item{resampling}{Resampling algorithm to be used. Resamping should be either "SSP" (SSP resampling), "STRAT" (stratified resampling) or "MULTI" (multinomial resampling).}
 
 \item{control}{A \code{list} of control parameters. See details.}
+
+\item{obs}{Either a vector of observations or a matrix of observations (the number of rows being the sample size).}
 }
 \value{
 A list with the following components:
