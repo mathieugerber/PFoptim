@@ -4,7 +4,7 @@
 #' @importFrom mnormt  rmt  rmnorm 
 #' @importFrom Rdpack reprompt
 #' @description This function implements the G-PFSO (Global Particle Filter Stochastic Optimization) algorithm of \insertCite{gerber2020online2;textual}{PFoptim} for minimzing either the function \eqn{\theta\mapsto E[\mathrm{fn}(\theta,Y)]} from i.i.d. realizations \eqn{y_1,...,y_n} of \eqn{Y} or the function  \eqn{\theta\mapsto\sum_{i=1}^n \mathrm{fn}(\theta,y_i)}, where \eqn{\theta} is a vector of dimension d.
-#' @usage gpfso(obs, N, fn, init, numit, ..., resampling=c("SSP", "STRAT", "MULTI"), control= list())
+#' @usage gpfso(obs, N, fn, init, numit, resampling=c("SSP", "STRAT", "MULTI"), ..., control= list())
 #' @param obs Either a vector of observations or a matrix of observations (the number of rows being the sample size). 
 #' @param N Number of particles. The parameter  \code{N}  must be greater or equal to 2.
 #' @param fn function for a single observation. If theta is an  \code{N} by d matrix and y is a single observation (i.e. y is a scalar if \code{obs} is a vector and a vector if \code{obs} is a matrix)  then \code{fn(theta,y)} must be a vector of length \code{N}. If some rows of theta are outside the search space then the corresponding entries of the vector \code{fn(theta, y)} must be equal to \code{Inf}.
@@ -91,7 +91,10 @@
 #' @references 
 #' \insertAllCited{}
 
-gpfso<-function(y, N, fn, init, ..., numit=-1, resampling="SSP", control= list()){
+
+
+
+gpfso<-function(obs, N, fn, init, numit=-1, resampling="SSP", ..., control= list()){
   #default values
   alpha<-0.5
   A<-1
@@ -195,17 +198,17 @@ gpfso<-function(y, N, fn, init, ..., numit=-1, resampling="SSP", control= list()
               nu<-control$nu
            }
   }
-  if(is.numeric(y)==FALSE){
-        return(cat('Error: y should be a numeric vector or a numeric matrix'))
-  }else if(is.vector(y)==FALSE && is.matrix(y)==FALSE){
-        return(cat('Error: y should be a numeric vector or a numeric matrix'))   
+  if(is.numeric(obs)==FALSE){
+        return(cat('Error: obs should be a numeric vector or a numeric matrix'))
+  }else if(is.vector(obs)==FALSE && is.matrix(obs)==FALSE){
+        return(cat('Error: obs should be a numeric vector or a numeric matrix'))   
   }else if((resampling %in% c("SSP", "STRAT", "MULTI"))==FALSE){
        return(cat('Error: resampling should be either "SSP", or "STRAT", or "MULTI" '))
   }else{
-       if(is.vector(y)){
-          nobs<-length(y)
+       if(is.vector(obs)){
+          nobs<-length(obs)
        }else{
-          nobs<-nrow(y)
+          nobs<-nrow(obs)
        }
        if(numit==-1){
          nit<-nobs
@@ -252,10 +255,10 @@ gpfso<-function(y, N, fn, init, ..., numit=-1, resampling="SSP", control= list()
        }else{
           use<-sample(1:nobs,1)
        }
-       if(is.vector(y)){
-           work<- -fn(particles,   y[use], ...)
+       if(is.vector(obs)){
+           work<- -fn(particles,   obs[use], ...)
        }else{
-           work<- -fn(particles,   y[use,],...)
+           work<- -fn(particles,   obs[use,],...)
        }
        if(is.numeric(work)==FALSE || length(c(work))!=N){
               return(cat('Error: for a single observation y, fn(particles, y) should be a vector of length N'))
@@ -296,10 +299,10 @@ gpfso<-function(y, N, fn, init, ..., numit=-1, resampling="SSP", control= list()
             }else{
                 use<-sample(1:nobs,1)
             }
-            if(is.vector(y)){
-               work<- -fn(particles,   y[use],...)
+            if(is.vector(obs)){
+               work<- -fn(particles,   obs[use],...)
             }else{
-               work<- -fn(particles,   y[use,],...)
+               work<- -fn(particles,   obs[use,],...)
             }
             work[is.nan(work)]<--Inf
             if(max(work)==-Inf){
