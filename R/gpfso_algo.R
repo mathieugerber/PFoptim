@@ -27,7 +27,7 @@
 #' \item{alpha:}{Parameter \eqn{\alpha} of the learning rate \eqn{t^{-\alpha}}, which must be a strictly positive real number. By default,  \code{alpha=0.5}.}
 #' \item{Sigma:}{Scale matrix used to sample the particles.  \code{Sigma} must be either a d by d covariance matrix or a strictly positive real number. In this latter case the scale matrix used to sample the particles is  \code{diag(Sigma , d )}. By default,  \code{Sigma=1}.}
 #' \item{trace:}{If trace=TRUE then the value of \eqn{\tilde{\theta}_{t}} and of the effective sample size \eqn{ESS_t} for all \eqn{t=1,\dots,\mathrm{numit}} are returned. By default, trace=FALSE.}
-#' \item{indep:}{If indep=TRUE and \code{Sigma} is a diagonal matrix or a scalar then the Student's t-distributions have independent components. By default, indep=TRUE and if \code{Sigma} is a not a diagonal matrix this parameter is ignored.}
+#' \item{indep:}{If indep=TRUE and \code{Sigma} is a diagonal matrix or a scalar then the Student's t-distributions have independent components. By default, indep=FALSE and if \code{Sigma} is a not a diagonal matrix this parameter is ignored.}
 #' \item{A:}{Parameter A of the sequence \eqn{(t_p)_{p\geq 0}} used by default (see above). This parameter must be strictly positive.}
 #' \item{B:}{Parameter B of the sequence \eqn{(t_p)_{p\geq 0}} used by default (see above). This parameter must non-negative.}
 #' \item{varrho:}{Parameter varrho of the sequence \eqn{(t_p)_{p\geq 0}} used by default (see above). This parameter must be in the interval (0,1).}
@@ -231,9 +231,9 @@ gpfso<-function(obs, N, fn, init, numit=-1, resampling="SSP", ..., control= list
        }
        indep_student<-FALSE
        if(max(abs(Sigma_use)-diag(Sigma_use))==0){
-            indep_student<-TRUE
-            if(is.null(control$indep)==FALSE && control$indep==FALSE){
-                 indep_student<-FALSE
+            indep_student<-FALSE
+            if(is.null(control$indep)==FALSE && control$indep==TRUE){
+                 indep_student<-TRUE
             }
        }
        
