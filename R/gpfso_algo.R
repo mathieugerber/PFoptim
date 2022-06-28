@@ -8,7 +8,7 @@
 #' @param obs Either a vector of observations or a matrix of observations (the number of rows being the sample size). 
 #' @param N Number of particles. The parameter  \code{N}  must be greater or equal to 2.
 #' @param fn function for a single observation. If theta is an  \code{N} by d matrix and y is a single observation (i.e. y is a scalar if \code{obs} is a vector and a vector if \code{obs} is a matrix)  then \code{fn(theta,y)} must be a vector of length \code{N}. If some rows of theta are outside the search space then the corresponding entries of the vector \code{fn(theta, y)} must be equal to \code{Inf}.
-#' @param init Function used to sample the initial particles  such that \code{init(N)} is an \code{N} by d matrix (or alternatively a vector of length \code{N} if d=1).
+#' @param init Either a vector of size d or a function used to sample the initial particles  such that \code{init(N)} is an \code{N} by d matrix (or alternatively a vector of length \code{N} if d=1). If \code{init} is a vector then the initial distribution is a Gaussian distribution with mean \code{init} and covariance matrix equal to (\code{sigma_init}^2) times the identity matrix. By default \code{sigma_init} is equal to two. The value of \code{sigma_init} can be changed using the \code{control} argument, see below.
 #' @param ... Further arguments to be passed to \code{fn}.
 #' @param numit Number of iterations of the algorithm. If \code{numit} is not specified then G-PFSO estimates the minimizer of the function \eqn{E[\mathrm{fn}(\theta,Y)]} (in which case the observations are processed sequentially and \code{numit} is equal to the sample size). If \code{numit} is specified then G-PFSO computes the minimizer of the function \eqn{\sum_{i=1}^n \mathrm{fn}(\theta,y_i)}.
 #' @param resampling Resampling algorithm to be used. Resamping should be either "SSP" (SSP resampling), "STRAT" (stratified resampling) or "MULTI" (multinomial resampling).
@@ -24,6 +24,7 @@
 #'
 #' The \code{control} argument is a list that can supply any of the following components:
 #' \describe{
+#' \item{sigma_init:}{Variance parameter of the distribution used by default to sample the initial particles.}
 #' \item{alpha:}{Parameter \eqn{\alpha} of the learning rate \eqn{t^{-\alpha}}, which must be a strictly positive real number. By default,  \code{alpha=0.5}.}
 #' \item{Sigma:}{Scale matrix used to sample the particles.  \code{Sigma} must be either a d by d covariance matrix or a strictly positive real number. In this latter case the scale matrix used to sample the particles is  \code{diag(Sigma , d )}. By default,  \code{Sigma=1}.}
 #' \item{trace:}{If trace=TRUE then the value of \eqn{\tilde{\theta}_{t}} and of the effective sample size \eqn{ESS_t} for all \eqn{t=1,\dots,\mathrm{numit}} are returned. By default, trace=FALSE.}
@@ -103,28 +104,52 @@ gpfso<-function(obs, N, fn, init, numit=-1, resampling="SSP", ..., control= list
   t0<-5
   c_ess<-0.7
   nu<-10
+  sigma_pi_def<-2
   
   if(is.numeric(N)==FALSE || length(c(N))!=1 || N<2 || N%%1!=0){
         return(cat('Error: N should be an integer greater or equal to 2'))
   }
-   if(is.function(init)==FALSE || (is.matrix(init(N))==FALSE && is.vector(init(N))==FALSE) ){
-       return(cat('Error: init should be a function such that init(N) is an N by d matrix (d= dimention of the search space) or a vector of length N (if d=1)'))
+  
+  if(is.function(init)==FALSE){
+       if(is.vector(init)==TRUE && is.numeric(init)==TRUE){
+           sigma_pi<-sigma_pi_def
+           if(is.null(control$sigma_init)==FALSE){
+               if(is.numeric(control$sigma_init)==FALSE || length(c(control$sigma_init))!=1 || control$sigma_init<=0){
+                   return(cat('Error: sigma_init should be a strictly positive real number'))
+               }else{
+                  sigma_pi<-control$sigma_init
+               }
+           }
+           pi0<-function(N){
+              return(rmnorm(N,rep(0,length(init)), varcov=diag(sigma_pi^2,length(init))))
+           }
+       }
+       else{
+            return(cat('Error: init should be either a vector is size d or a function such that init(N) is an N by d matrix (d= dimention of the search space) or a vector of length N (if d=1)'))
+       }
   }
-  test<-init(2)
+  if(is.function(init)==TRUE){
+      if(is.matrix(init(N))==FALSE && is.vector(init(N))==FALSE ){
+          return(cat('Error: init should be a function such that init(N) is an N by d matrix (d= dimention of the search space) or a vector of length N (if d=1)'))
+      }
+      else{
+         pi0<-init
+      }
+  }
+  test<-pi0(2)
   if(is.vector(test)==TRUE){
         d<-1
         Sigma_use<-diag(1,d)
         chol_Sig<-chol(Sigma_use)
-  }else if(is.matrix(test)==TRUE){
+  }else{
         d<-ncol(test)
         Sigma_use<-diag(1,d)
-        chol_Sig<-chol(Sigma_use)
-  }else{
-        return(cat('Error: init should be a function such that init(N) is an N by d matrix (d= dimention of the search space) or a vector of length N (if d=1)'))
-  }  
+        chol_Sig<-chol(Sigma_use)  
+  }     
   if(is.numeric(numit)==FALSE || length(c(numit))!=1 || (numit<2 && numit!= -1) || numit%%1!=0){
         return(cat('Error: numit should be an integer greater or equal to 2'))
   }
+  
   if(is.null(control$alpha)==FALSE){
         if(is.numeric(control$alpha)==FALSE || length(c(control$alpha))!=1 || control$alpha<=0){
               return(cat('Error: alpha should be a strictly positive real number'))
@@ -249,7 +274,7 @@ gpfso<-function(obs, N, fn, init, numit=-1, resampling="SSP", ..., control= list
        }
        #initialization
        t<-1
-       particles<-as.matrix(init(N))  
+       particles<-as.matrix(pi0(N))  
        if(numit==-1){
           use<-t
        }else{
@@ -265,7 +290,7 @@ gpfso<-function(obs, N, fn, init, numit=-1, resampling="SSP", ..., control= list
        }else{
          work[is.nan(work)]<--Inf
          if(max(work)== -Inf){
-              return(cat('Error: none of the particles returned by init(N) is in the search space'))
+              return(cat('Error: none of the particles returned by the initial distribution is in the search space. Change init to fix this problem.'))
          }else{
            w<-work
            w1<- exp(w - max(w))
