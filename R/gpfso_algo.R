@@ -107,7 +107,7 @@ gpfso<-function(obs, N, fn, init, numit=-1, resampling="SSP", ..., control= list
   if(is.numeric(N)==FALSE || length(c(N))!=1 || N<2 || N%%1!=0){
         return(cat('Error: N should be an integer greater or equal to 2'))
   }
-  if(is.function(init)==FALSE || is.null(dim(init(N)))==TRUE){
+   if(is.function(init)==FALSE || (is.matrix(init(N))==FALSE && is.vector(init(N))==FALSE) ){
        return(cat('Error: init should be a function such that init(N) is an N by d matrix (d= dimention of the search space) or a vector of length N (if d=1)'))
   }
   test<-init(2)
