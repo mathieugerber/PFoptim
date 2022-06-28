@@ -13,7 +13,7 @@ gpfso(obs, N, fn, init, numit, resampling=c("SSP", "STRAT", "MULTI"), ..., contr
 
 \item{fn}{function for a single observation. If theta is an  \code{N} by d matrix and y is a single observation (i.e. y is a scalar if \code{obs} is a vector and a vector if \code{obs} is a matrix)  then \code{fn(theta,y)} must be a vector of length \code{N}. If some rows of theta are outside the search space then the corresponding entries of the vector \code{fn(theta, y)} must be equal to \code{Inf}.}
 
-\item{init}{Function used to sample the initial particles  such that \code{init(N)} is an \code{N} by d matrix (or alternatively a vector of length \code{N} if d=1).}
+\item{init}{Either a vector of size d or a function used to sample the initial particles  such that \code{init(N)} is an \code{N} by d matrix (or alternatively a vector of length \code{N} if d=1). If \code{init} is a vector then the initial distribution is a Gaussian distribution with mean \code{init} and covariance matrix equal to (\code{sigma_init}^2) times the identity matrix. By default \code{sigma_init} is equal to two. The value of \code{sigma_init} can be changed using the \code{control} argument, see below.}
 
 \item{numit}{Number of iterations of the algorithm. If \code{numit} is not specified then G-PFSO estimates the minimizer of the function \eqn{E[\mathrm{fn}(\theta,Y)]} (in which case the observations are processed sequentially and \code{numit} is equal to the sample size). If \code{numit} is specified then G-PFSO computes the minimizer of the function \eqn{\sum_{i=1}^n \mathrm{fn}(\theta,y_i)}.}
 
@@ -44,6 +44,7 @@ with A=B=1, \eqn{\varrho=0.1} and \eqn{t_0=5}. The value of \eqn{A,B,\varrho} an
 
 The \code{control} argument is a list that can supply any of the following components:
 \describe{
+\item{sigma_init:}{Variance parameter of the distribution used by default to sample the initial particles.}
 \item{alpha:}{Parameter \eqn{\alpha} of the learning rate \eqn{t^{-\alpha}}, which must be a strictly positive real number. By default,  \code{alpha=0.5}.}
 \item{Sigma:}{Scale matrix used to sample the particles.  \code{Sigma} must be either a d by d covariance matrix or a strictly positive real number. In this latter case the scale matrix used to sample the particles is  \code{diag(Sigma , d )}. By default,  \code{Sigma=1}.}
 \item{trace:}{If trace=TRUE then the value of \eqn{\tilde{\theta}_{t}} and of the effective sample size \eqn{ESS_t} for all \eqn{t=1,\dots,\mathrm{numit}} are returned. By default, trace=FALSE.}
